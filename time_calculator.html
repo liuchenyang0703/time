@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>时间计算器 - 间隔时间计算</title>
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f4f4f9;
+    }
+    .time-calculator {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        width: 300px;
+    }
+    .time-calculator h2 {
+        text-align: center;
+    }
+    .time-calculator label {
+        display: block;
+        margin-top: 10px;
+    }
+    .time-calculator input[type="text"] {
+        width: calc(100% - 22px);
+        padding: 5px;
+        margin-top: 5px;
+    }
+    .time-calculator button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .time-calculator button:hover {
+        background-color: #0056b3;
+    }
+    .time-calculator .error {
+        color: red;
+        font-size: 0.8em;
+        margin-top: 5px;
+    }
+    .time-calculator #result {
+        margin-top: 20px;
+        border-top: 1px solid #ddd;
+        padding-top: 10px;
+    }
+</style>
+<script>
+function isValidTime(time) {
+    var timeFormat = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$|^([0-1]?[0-9]|2[0-3])\.[0-5][0-9]$/;
+    return timeFormat.test(time);
+}
+
+function formatTime(time) {
+    time = time.replace(/\./, ':');
+    var [hours, minutes] = time.split(':').map(function(part) {
+        return part.length === 1 ? '0' + part : part;
+    });
+    return `${hours}:${minutes}`;
+}
+
+function calculateTimeDifference(start, end) {
+    start = formatTime(start);
+    end = formatTime(end);
+
+    var startHours = parseInt(start.split(':')[0], 10);
+    var startMinutes = parseInt(start.split(':')[1], 10);
+    var endHours = parseInt(end.split(':')[0], 10);
+    var endMinutes = parseInt(end.split(':')[1], 10);
+
+    var startTotalMinutes = startHours * 60 + startMinutes;
+    var endTotalMinutes = endHours * 60 + endMinutes;
+    var differenceInMinutes = endTotalMinutes - startTotalMinutes;
+
+    var differenceInHours = Math.floor(differenceInMinutes / 60);
+    var remainingMinutes = differenceInMinutes % 60;
+    var differenceInDays = Math.floor(differenceInHours / 24);
+    var differenceInMinutesOnly = differenceInHours % 24 * 60 + remainingMinutes;
+    var differenceInSeconds = differenceInMinutesOnly * 60;
+
+    return {
+        hours: differenceInHours,
+        minutes: remainingMinutes,
+        days: differenceInDays,
+        totalMinutes: differenceInMinutesOnly,
+        seconds: differenceInSeconds
+    };
+}
+
+function updateTimeDifference() {
+    var startTime = document.getElementById('start-time').value;
+    var endTime = document.getElementById('end-time').value;
+
+    var startTimeError = !startTime || isValidTime(startTime) ? '' : '时间格式不正确，请使用HH:MM或HH.MM格式。';
+    var endTimeError = !endTime || isValidTime(endTime) ? '' : '时间格式不正确，请使用HH:MM或HH.MM格式。';
+
+    document.getElementById('start-error').textContent = startTimeError;
+    document.getElementById('end-error').textContent = endTimeError;
+
+    if (startTime && endTime) {
+        var timeDiff = calculateTimeDifference(startTime, endTime);
+        document.getElementById('result').innerHTML = `
+            🕐 上班打卡时间：${formatTime(startTime)}<br>
+            🕗 下班打卡时间：${formatTime(endTime)}<br>
+            ————————————<br>
+            总时间差：${timeDiff.hours}小时${timeDiff.minutes}分钟<br>
+            按天计算：${timeDiff.days}天<br>
+            按时计算：${timeDiff.hours}小时<br>
+            按分计算：${timeDiff.totalMinutes}分钟<br>
+            按秒计算：${timeDiff.seconds}秒`;
+    } else {
+        document.getElementById('result').innerHTML = '';
+    }
+}
+</script>
+</head>
+<body>
+<div class="time-calculator">
+    <h2>时间计算器 - 间隔时间计算</h2>
+    <label for="start-time">🕐 上班打卡时间 (HH:MM):</label>
+    <input type="text" id="start-time" placeholder="HH:MM" oninput="updateTimeDifference()">
+    <span id="start-error" class="error"></span>
+    <br><br>
+    <label for="end-time">🕗 下班打卡时间 (HH:MM):</label>
+    <input type="text" id="end-time" placeholder="HH:MM" oninput="updateTimeDifference()">
+    <span id="end-error" class="error"></span>
+    <br><br>
+    <h3>结果:</h3>
+    <div id="result"></div>
+</div>
+</body>
+</html>

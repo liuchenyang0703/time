@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>时间计算器 - 时间加减</title>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var time1Input = document.getElementById('time1');
+    var time2Input = document.getElementById('time2');
+    var resultDiv = document.getElementById('result');
+    var error1Span = document.getElementById('error1');
+    var error2Span = document.getElementById('error2');
+
+    function validateTime(time, id) {
+        var regex = /^(\d{1,2})[.:](\d{1,2})$/;
+        var match = time.match(regex);
+        if (match) {
+            var hours = parseInt(match[1], 10);
+            var minutes = parseInt(match[2], 10);
+            return hours >= 0 && hours <= 100 && minutes >= 0 && minutes < 60;
+        }
+        return false;
+    }
+
+    function timeToMinutes(time) {
+        var parts = time.replace(":", ".").split(".");
+        var [h, m] = parts.map(Number);
+        return h * 60 + m;
+    }
+
+    function minutesToTime(minutes) {
+        var hours = Math.floor(minutes / 60);
+        var minutes = minutes % 60;
+        return hours + "小时" + minutes + "分钟";
+    }
+
+    function calculateTime() {
+        var time1 = time1Input.value;
+        var time2 = time2Input.value;
+        var operation = document.querySelector('input[name="operation"]:checked').value;
+
+        error1Span.textContent = '';
+        error2Span.textContent = '';
+        resultDiv.innerHTML = '<h3>结果：</h3><hr>';
+
+        if (time1 && time2) {
+            if (!validateTime(time1, 'time1')) {
+                error1Span.textContent = '格式不正确';
+            }
+
+            if (!validateTime(time2, 'time2')) {
+                error2Span.textContent = '格式不正确';
+            }
+
+            if (error1Span.textContent || error2Span.textContent) {
+                return;
+            }
+
+            var time1Minutes = timeToMinutes(time1);
+            var time2Minutes = timeToMinutes(time2);
+            var totalMinutes;
+
+            if (operation === 'add') {
+                totalMinutes = time1Minutes + time2Minutes;
+            } else if (operation === 'subtract') {
+                if (time1Minutes < time2Minutes) {
+                    resultDiv.innerHTML += '<p style="color: red;">时间1必须大于或等于时间2进行相减操作</p>';
+                    return;
+                } else {
+                    totalMinutes = time1Minutes - time2Minutes;
+                }
+            }
+
+            resultDiv.innerHTML += `
+                <p>时间1：${minutesToTime(time1Minutes)}</p>
+                <p>时间2：${minutesToTime(time2Minutes)}</p>
+                <p>${operation === 'add' ? '相加' : '相减'}计算结果：${minutesToTime(totalMinutes)}</p>
+            `;
+        }
+    }
+
+    document.querySelectorAll('input[name="operation"]').forEach(function(radio) {
+        radio.addEventListener('change', calculateTime);
+    });
+
+    time1Input.addEventListener('input', calculateTime);
+    time2Input.addEventListener('input', calculateTime);
+
+    // 默认执行一次计算
+    calculateTime();
+});
+</script>
+<style>
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f7f7f7;
+}
+
+.container {
+    border: 1px solid #ddd;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    width: 300px;
+}
+
+.container h2 {
+    text-align: center;
+}
+
+input[type="text"] {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+.operation-group {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+input[type="radio"] {
+    margin-right: 8px;
+}
+
+label {
+    margin-top: 10px;
+}
+
+.error {
+    color: red;
+    font-size: 0.8em;
+    text-align: left;
+}
+
+#result hr {
+    margin-top: 0;
+    border: 0;
+    height: 1px;
+    background-color: #e0e0e0;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <h2>时间计算器 - 时间加减</h2>
+    <div style="margin-bottom: 10px;">
+        <label for="time1" style="display: block;">时间1 (HH:MM):</label>
+        <input type="text" id="time1" placeholder="HH:MM">
+        <span id="error1" class="error"></span>
+    </div>
+    
+    <div style="margin-bottom: 10px;">
+        <label for="time2" style="display: block;">时间2 (HH:MM):</label>
+        <input type="text" id="time2" placeholder="HH:MM">
+        <span id="error2" class="error"></span>
+    </div>
+    
+    <div class="operation-group">
+        <input type="radio" id="add" name="operation" value="add" checked>
+        <label for="add">相加</label>
+        <input type="radio" id="subtract" name="operation" value="subtract">
+        <label for="subtract">相减</label>
+    </div>
+    <br>
+
+    <div id="result"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时间计算器</title>
+    <style>
+        /* 通用字体与背景 */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #6e7fcd, #d9b2ff); /* 渐变背景 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 背景粒子特效 */
+        #particles-js {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* 顶部选择框容器 */
+        .header {
+            background-color: #ffffff;
+            padding: 20px 30px;
+            margin-top: 50px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+            position: relative;
+        }
+
+        /* 下拉框 */
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 16px;
+            color: #333;
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        select:hover {
+            border-color: #4f8ef7;
+            background-color: #e6f3ff;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #4f8ef7;
+            box-shadow: 0 0 8px rgba(79, 142, 247, 0.5);
+        }
+
+        /* iframe 内容区 */
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-width: 1000px;
+            width: 100%;
+            min-height: 80vh;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 12px;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        iframe.loaded {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* 响应式设计：小屏幕优化 */
+        @media (max-width: 600px) {
+            .content {
+                height: auto;
+                min-height: 60vh;
+            }
+
+            select {
+                font-size: 14px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- 背景粒子效果 -->
+    <div id="particles-js"></div>
+
+    <!-- 顶部选择框 -->
+    <div class="header">
+        <select id="pageSelector" onchange="loadPage()">
+            <option value="time_calculator.html">时间计算器 - 间隔时间计算</option>
+            <option value="another_page.html">时间计算器 - 时间加减</option>
+        </select>
+    </div>
+
+    <!-- iframe 显示页面内容 -->
+    <div class="content">
+        <iframe src="time_calculator.html" id="pageFrame" class="loaded"></iframe>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+    <script>
+        particlesJS('particles-js', {
+            particles: {
+                number: {
+                    value: 100,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                shape: {
+                    type: 'circle',
+                    stroke: {
+                        width: 0,
+                        color: '#ffffff'
+                    }
+                },
+                opacity: {
+                    value: 0.5,
+                    random: true,
+                    anim: {
+                        enable: true,
+                        speed: 1,
+                        opacity_min: 0.1,
+                        sync: false
+                    }
+                },
+                size: {
+                    value: 3,
+                    random: true,
+                    anim: {
+                        enable: false
+                    }
+                },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: 'none',
+                    random: false,
+                    straight: false,
+                    out_mode: 'out',
+                    bounce: false,
+                    attract: {
+                        enable: false,
+                        rotateX: 600,
+                        rotateY: 1200
+                    }
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: 'grab'
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: 'push'
+                    }
+                }
+            },
+            retina_detect: true
+        });
+
+        // 处理页面加载
+        function loadPage() {
+            const selectedPage = document.getElementById('pageSelector').value;
+            const iframe = document.getElementById('pageFrame');
+            iframe.classList.remove('loaded'); // 移除已加载类，重新加载
+            iframe.src = selectedPage;
+            iframe.onload = () => {
+                iframe.classList.add('loaded'); // 加载完成后添加类
+            };
+        }
+
+        // 页面加载时默认显示时间计算器
+        window.onload = function() {
+            loadPage();
+        };
+    </script>
+
+</body>
+</html>

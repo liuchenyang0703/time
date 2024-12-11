@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时间计算器</title>
+    <style>
+        /* 通用字体与背景 */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f0f4f8;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* 顶部选择框容器 */
+        .header {
+            background-color: #ffffff;
+            padding: 20px 30px;
+            margin-top: 50px; /* 添加顶部间距 */
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+        }
+
+        /* 下拉框 */
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 16px;
+            color: #333;
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        select:hover {
+            border-color: #4f8ef7;
+            background-color: #e6f3ff;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #4f8ef7;
+            box-shadow: 0 0 8px rgba(79, 142, 247, 0.5);
+        }
+
+        /* iframe 内容区 */
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-width: 1000px;
+            width: 100%;
+            min-height: 80vh; /* 增加最小高度 */
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            overflow: hidden; /* 确保框外内容不会溢出 */
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 12px;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        iframe.loaded {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* 响应式设计：小屏幕优化 */
+        @media (max-width: 600px) {
+            .content {
+                height: auto; /* 自动调整内容区域的高度 */
+                min-height: 60vh; /* 为小屏幕提供适应性的最小高度 */
+            }
+
+            select {
+                font-size: 14px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- 顶部选择框 -->
+    <div class="header">
+        <select id="pageSelector" onchange="loadPage()">
+            <option value="time_calculator.html">时间计算器 - 间隔时间计算</option>
+            <option value="another_page.html">时间计算器 - 时间加减</option>
+        </select>
+    </div>
+
+    <!-- iframe 显示页面内容 -->
+    <div class="content">
+        <iframe src="time_calculator.html" id="pageFrame" class="loaded"></iframe>
+    </div>
+
+    <script>
+        // 处理页面加载
+        function loadPage() {
+            const selectedPage = document.getElementById('pageSelector').value;
+            const iframe = document.getElementById('pageFrame');
+            iframe.classList.remove('loaded'); // 移除已加载类，重新加载
+            iframe.src = selectedPage;
+            iframe.onload = () => {
+                iframe.classList.add('loaded'); // 加载完成后添加类
+            };
+        }
+
+        // 页面加载时默认显示时间计算器
+        window.onload = function() {
+            loadPage();
+        };
+    </script>
+
+</body>
+</html>
