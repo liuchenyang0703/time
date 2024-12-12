@@ -55,6 +55,12 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="30" viewBox="0 0 24 24" width="30" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'); /* SVG箭头 */
+            background-position: right 10px center;
+            background-repeat: no-repeat;
         }
 
         select:hover {
@@ -108,7 +114,6 @@
                 font-size: 14px;
             }
         }
-
     </style>
 </head>
 <body>
@@ -129,7 +134,7 @@
         <iframe src="time_calculator.html" id="pageFrame" class="loaded"></iframe>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script> 
     <script>
         particlesJS('particles-js', {
             particles: {
@@ -203,6 +208,10 @@
             iframe.src = selectedPage;
             iframe.onload = () => {
                 iframe.classList.add('loaded'); // 加载完成后添加类
+            };
+            iframe.onerror = () => {
+                console.error('Failed to load the selected page.');
+                // 可以在这里添加用户错误提示
             };
         }
 
